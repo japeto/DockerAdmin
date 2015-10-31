@@ -15,7 +15,7 @@
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			<button id="deleteContainerButton"  containerID="<?php echo $myContainer->ID; ?>" type="button" class="btn btn-danger">Delete</button>
+			<button id="deleteContainerButton"  containerID="<?php echo $myContainer->Hostname; ?>" type="button" class="btn btn-danger">Delete</button>
 		  </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

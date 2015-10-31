@@ -143,10 +143,16 @@ class containerModel {
 	
 	 public function createContainer($hostname,$image,$cmd){  
 
+	  	$this->settings->host ="localhost";
+	  	$this->settings->port ="22";
+	  	$this->settings->user ="root";
+	  	$this->settings->password ="jeffersonamado";
 		$connection = ssh2_connect($this->settings->host, intval($this->settings->port));
+
 		if (!$connection) return new Notification(notificationType::Danger,'Error!', 'SSH connection to host '.$this->settings->host.':'.$this->settings->port.' failed ! Check the port and that the service is running.'.$this->settings->host.'-'. intval($this->settings->port));		
 		ssh2_auth_password($connection, $this->settings->user,$this->settings->password);
-		$stream = ssh2_exec($connection,'docker run -i -d -h '.$hostname.' -t '.$image.' '.$cmd);
+		// $stream = ssh2_exec($connection,'docker run -i -d -h '.$hostname.' -t '.$image.' '.$cmd);
+		$stream = ssh2_exec($connection,'docker run -i -d -t '.$image.' '.$cmd);
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 
 		// Enable blocking for both streams
@@ -208,8 +214,7 @@ class containerModel {
 		
 		$images=explode('#',$output,-1);
 		$list_images=array();
-		foreach($images as $image)
-		{
+		foreach($images as $image){
 			array_push($list_images,preg_split('/\s+/', $image,-1,PREG_SPLIT_NO_EMPTY));
 		}	
 		return $list_images;

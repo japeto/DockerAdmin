@@ -9,15 +9,15 @@
 <?php
 
 	$updown="Uptime";
-	$startstopbutton='<button type="button" isStart="false" class="btn btn-danger" id="btnStartStop" data-loading-text="Stopping..." containerID="'.$myContainer->Hostname.'">Stop</button>';
-	$restartbutton='<button type="button" id="btnRestart" class="btn btn-warning" data-loading-text="Restarting..." containerID="'.$myContainer->Hostname.'">Restart</button>';
+	$startstopbutton='&nbsp;<a type="button" class="btn btn-primary btn-sm btnstop"  containerID="'.$myContainer->Hostname.'"><span class="glyphicon glyphicon-stop"> Detener</span></a>';
+	$restartbutton='&nbsp;<a type="button" class="btn btn-success btn-sm btnrestart"  containerID="'.$myContainer->Hostname.'"><span class="glyphicon glyphicon-repeat"> Re-iniciar</span></a>';
 	if($myContainer->Isrunning=="danger"){
 		$updown="Downtime";
-		$startstopbutton='<button type="button" isStart="true" class="btn btn-success" id="btnStartStop" data-loading-text="Starting..." containerID="'.$myContainer->Hostname.'">Start</button>';
+		$startstopbutton='&nbsp;<a type="button" class="btn btn-success btn-sm btnstart"  containerID="'.$myContainer->Hostname.'"><span class="glyphicon glyphicon-play"> Iniciar</span></a>';
 		$restartbutton='';
 	}
 		
-	$summary=array("Container ID"=>$myContainer->Hostname,"Image"=>$myContainer->Image,$updown=>$myContainer->Uptime);
+	$summary=array("Container"=>$myContainer->Hostname,"Imagen"=>$myContainer->Image);
 
 
 	echo '<div class="panel panel-'.$myContainer->Isrunning.'">';
@@ -27,16 +27,17 @@
 	echo '<div class="panel-body">';
 	echo '<div class="panel">';
 	echo '<div class="panel-heading">';
-    echo '<h3 class="panel-title">Summary</h3>';
+    echo '<h3 class="panel-title">Resumen</h3>';
+    echo '<h5>Esta es la informacion de la ejecucion del docker en el equipo remoto.</h5>';
 	echo '</div>';
-	echo '<div class="panel-body">';
+	echo '<div class="panel-body" style="background:#eee;border-radius:3px;border:1px solid #333;">';
 	foreach($summary as $key=>$value)
 	{
 		echo '<div class="col-md-1">';
 		echo '<b>'.$key.'</b>';
 		echo '</div>';
 		echo '<div class="col-md-5" style="overflow:hidden; text-overflow:ellipsis;">';
-		echo $value;
+		echo ': '.$value;
 		echo '</div>';
 	}
 	echo '</div>';
@@ -44,12 +45,13 @@
 	
 	if($myContainer->Isrunning!="danger")
 	{
-		$summary=array("IP Address"=>$myContainer->ContainerNetwork->IP.'/'.$myContainer->ContainerNetwork->Prefix,"Gateway"=>$myContainer->ContainerNetwork->GW,"Bridge"=>$myContainer->ContainerNetwork->Bridge);
+		$summary=array("IP: "=>$myContainer->ContainerNetwork->IP.'/'.$myContainer->ContainerNetwork->Prefix,"Gateway"=>$myContainer->ContainerNetwork->GW,"Bridge"=>$myContainer->ContainerNetwork->Bridge);
 		echo '<div class="panel">';
 		echo '<div class="panel-heading">';
-		echo '<h3 class="panel-title">Network</h3>';
+		echo '<h3 class="panel-title">Red</h3>';
+		echo '<h5>Esta es la informacion de la red del docker seleccionado.</h5>';
 		echo '</div>';
-		echo '<div class="panel-body">';
+		echo '<div class="panel-body" style="background:#eee;border-radius:3px;border:1px solid #333;">';
 		foreach($summary as $key=>$value)
 		{
 			echo '<div class="col-md-1">';
@@ -65,9 +67,10 @@
 		//display top processes
 		echo '<div class="panel hidden-sm hidden-xs">';
 		echo '<div class="panel-heading">';
-		echo '<h3 class="panel-title">Processes</h3>';
+		echo '<h3 class="panel-title">Proceso en el docker</h3>';
+		echo '<h5>Esta es la informacion de la ejecucion del docker.</h5>';
 		echo '</div>';
-		echo '<div class="panel-body">';
+		echo '<div class="panel-body" style="background:#eee;border-radius:3px;border:1px solid #333;">';
 		echo '<pre><code>'.$myContainer->RunningProcesses.'</code></pre>';
 		echo '</div>';
 		echo '</div>';
@@ -78,9 +81,8 @@
 	echo '<div class="btn-group">';
 	echo $startstopbutton;
 	echo $restartbutton;
-	echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-loading-text="Deleting..." id="btncontainerDelete" data-target="#modalDeleteContainer">Delete</button>';
+	echo '&nbsp;<a type="button" class="btn btn-danger btn-sm btndelete"  containerID="'.$myContainer->Hostname.'"><span class="glyphicon glyphicon-trash"> Eliminar</span></a>';
 	echo '</div>';
-	
 	echo '</div>';
 	echo '</div>';
 

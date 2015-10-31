@@ -193,6 +193,30 @@ $(".btnrestart").click(function(){
 					console.log(msg);
 				  });	
 });
+$(".btndelete").click(function(){
+	var btn = $(this);
+	var containerID=btn.attr('containerID');
+	console.log (containerID)
+	btn.html(loadingGif);
+	request = $.ajax({
+				url: "scripts/cmdContainer.php",
+				type: "POST",
+				data: {command:'docker rm '+containerID}
+				});
+		request.done(function( msg ){	
+			if(msg!=0){
+				createNotification($("#notificationContainer"),'danger','Error !',msg);
+				
+			}else{						
+				$("#notificationContainer").empty();
+				location.reload();
+			}
+			
+		});	
+		request.fail(function( msg ) {	
+					console.log(msg);
+				  });	
+});
 // $(".btndel").click(function(){
 	// var btn = $(this);
 	// var containerID=btn.attr('containerID');
@@ -298,11 +322,12 @@ $( "#deleteContainerButton" ).click(function() {
 		btn=$("#btncontainerDelete");
 		btn.button('loading');
 		btn.html(btn.html()+' '+loadingGif);
+		console.log('docker rm '+containerID);
 		request = $.ajax({
-					url: "scripts/cmdContainer.php",
-					type: "post",
-					data: { command:'docker rm '+containerID}
-					});
+			url: "scripts/cmdContainer.php",
+			type: "post",
+			data: { command:'docker rm '+containerID}
+			});
 					
 			request.done(function( msg ) 
 			{	
@@ -346,6 +371,9 @@ $( "#btncontainerCreate" ).click(function() {
 		btn.html(btn.html()+' '+loadingGif);
 		//check input aren't empty or placeholder isn't basic
 		$("#notificationSettings").empty();
+		
+		console.log( $('#containerNameInput').val(),$('#containerImageInput').val(),$('#commandInput').val() );
+
 		request = $.ajax({
 					url: "scripts/createContainer.php",
 					type: "post",
