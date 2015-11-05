@@ -30,15 +30,15 @@ class mainController {
 				switch($_GET['subMenuID']){
 					case 2: 
 						echo '<div class="row"><div class="col-sm-9 col-sm-offset-2 col-md-8 col-md-offset-2 main">';
-						echo "<h1>Dockers</h1>";
-        				echo "<h5>Aqui esta la lista de contenedores en <b>".$config->host.":".$config->port."</b></h5>";
+						// echo "<h1>Dockers</h1>";
+        				// echo "<h5>Aqui esta la lista de contenedores en <b>".$config->host.":".$config->port."</b></h5>";
         				echo '</div>';
 						$args='-a';
 					break;
-					case 3: 
-					include 'views/terminalView.php';
-					return;
-					case 4: $imageArray=$this->containerModel->getImages();
+					// case 3: 
+					// include 'views/terminalView.php';
+					// return;
+					case 3: $imageArray=$this->containerModel->getImages();
 						if(@get_class($imageArray)=='Notification'){
 							$this->lastNotification=$imageArray;
 							echo '<div class="row"><div class="col-sm-9 col-sm-offset-2 col-md-8 col-md-offset-2 main">';
@@ -51,8 +51,8 @@ class mainController {
 					return;
 					default :
 						echo '<div class="row"><div class="col-sm-9 col-sm-offset-2 col-md-8 col-md-offset-2 main">';
-						echo "<h1>Dockers Activos</h1>";
-        				echo "<h5>Aqui esta la lista de contenedores activos <b>".$config->host.":".$config->port."</b></h5>";
+						// echo "<h1>Dockers Activos</h1>";
+        				// echo "<h5>Aqui esta la lista de contenedores activos <b>".$config->host.":".$config->port."</b></h5>";
         				echo '</div>';
 					break;
 

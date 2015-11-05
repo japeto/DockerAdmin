@@ -36,28 +36,47 @@
 			$controller = new mainController();  
 			$notification=new notificationController();
 	?>
-    <div class="navbar navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-         <a class="navbar-brand" href="index.php?subMenuID=1" style="margin: 0px; padding: 0px">
-            <img src="img/banner2.jpg"/>
-         </a>
-        </div>
-        <div class="navbar-collapse collapse"> 
-          <ul class="nav navbar-nav navbar-right">	
-            <?php
-              $controller->getNavbarMenu();
-            ?>
-          </ul>	  
-        </div>
+<!--   <div class="navbar navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+       <a class="navbar-brand" href="index.php?subMenuID=1" style="margin: 0px; padding: 0px">
+          <img src="img/banner2.jpg"/>
+       </a>        
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="navbar-collapse collapse"> 
+        <ul class="nav navbar-nav navbar-right">	
+          <?php
+            $controller->getNavbarMenu();
+          ?>
+        </ul>	  
       </div>
     </div>
+  </div> -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="index.php?subMenuID=1" class="logo"><img src="img/banner2.jpg"/></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+          <?php
+            $controller->getNavbarMenu();
+          ?>
+            </ul>
+        </div>
+    </div>
+</div>  
 	
 	<div class="container-fluid">
 		<?php $controller->getMainContent(); ?>

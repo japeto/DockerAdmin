@@ -2,7 +2,7 @@
 	<ul class="nav nav-sidebar">
 		<?php
 			//display Navbar Menu
-		$menuItems=array("Activos","Todos","Terminal","Crear contenedor");
+		$menuItems=array("Alive","All","New Container");
 		// $menuItems=array("Activos","Todos","Create New");
 		$activeItem=1;
 		if(isset($_GET['subMenuID']))$activeItem=$_GET['subMenuID'];
@@ -15,5 +15,5 @@
 		}
 		?>
 	</ul>
-	<center><h4>Herramienta para la gestion de Dockers</h4></center>
+	<!-- <center><h4>Herramienta para la gestion de Dockers</h4></center> -->
 </div>

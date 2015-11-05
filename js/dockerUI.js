@@ -352,17 +352,12 @@ $( "#deleteContainerButton" ).click(function() {
 					  
 });
 
-/*************/
-
-/*CREATE CONTAINER PAGE*/
-
+/************ CREATE CONTAINER PAGE */
 $( "#btncontainerCreate" ).click(function() { 
 		
 		var containerIDRegex = '[0-9a-fA-F]{64}';
-		
 		//to use browser's HTML5 validator
-		if(!$('#formCreateContainer')[0].checkValidity())
-		{
+		if(!$('#formCreateContainer')[0].checkValidity()){
 			$('#formCreateContainer .submit').click();
 			return;
 		}
@@ -372,33 +367,29 @@ $( "#btncontainerCreate" ).click(function() {
 		//check input aren't empty or placeholder isn't basic
 		$("#notificationSettings").empty();
 		
-		console.log( $('#containerNameInput').val(),$('#containerImageInput').val(),$('#commandInput').val() );
-
+		// console.log( $('#containerNameInput').val(),$('#containerImageInput').val(),$('#commandInput').val() );
+		// console.log( "envia el formulario: "+$('#formCreateContainer').serialize() );
 		request = $.ajax({
-					url: "scripts/createContainer.php",
-					type: "post",
-					data: { hostname:$('#containerNameInput').val(),image:$('#containerImageInput').val(),cmd:$('#commandInput').val()}
-					});
+			url: "scripts/createContainer.php",
+			type: "post",
+			data: $('#formCreateContainer').serialize()
+		});
 					
-			request.done(function( msg ) 
-			{	
-				btn.button('reset');
-				//will return containerID if kaikki OK
-				if(!msg.match(containerIDRegex))
-				{
-					createNotification($("#notificationContainer"),'danger','Error !',msg);
-					
-				}
-				else
-				{					
-					//go to containerID.php page
-					window.location = 'index.php?containerID='+msg;		
-				}
-				
-			});	
-			request.fail(function( msg ) {	
-					   alert(msg);
-					  });	
+		request.done(function( msg ) {	
+			// console.log(JSON.parse(msg));
+			// console.log(msg);
+			btn.button('reset');
+			// will return containerID if kaikki OK
+			if(!msg.match(containerIDRegex)){
+				createNotification($("#notificationContainer"),'danger','Error !',msg);				
+			}else{					
+				// go to containerID.php page
+				window.location = 'index.php?containerID='+msg;		
+			}
+		});	
+		request.fail(function( msg ) {	
+			console.log(JSON.parse(msg));
+		});	
 					  
 });
 

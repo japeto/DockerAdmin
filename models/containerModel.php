@@ -57,12 +57,12 @@ class containerModel {
 			//calculate uptime
 			//the time from docker looks like this : 2014-02-06T13:32:03.776577907Z
 			//strtotime doesn't parse time with ms so you have to trim the first 19char
-			$time1=strtotime(substr($containerArray[$i]->State->StartedAt,0,19));
-			if($isrunning=="danger")$time1=strtotime(substr($containerArray[$i]->State->FinishedAt,0,19));
-			$time2=strtotime("now");
-			$UPtime=$this->seconds2human($time2-$time1);
+			// $time1=strtotime(substr($containerArray[$i]->State->StartedAt,0,19));
+			// if($isrunning=="danger")$time1=strtotime(substr($containerArray[$i]->State->FinishedAt,0,19));
+			// $time2=strtotime("now");
+			// $UPtime=$this->seconds2human($time2-$time1);
 			
-			$myContainer=new Container($containerArray[$i]->ID,$containerArray[$i]->Config->Image,$containerArray[$i]->Config->Hostname,$UPtime,$isrunning,$containerArray[$i]->NetworkSettings->IPAddress);
+			$myContainer=new Container($containerArray[$i]->ID,$containerArray[$i]->Config->Image,$containerArray[$i]->Config->Hostname,$containerArray[$i]->Name,substr($containerArray[$i]->State->StartedAt,0,19),$isrunning,$containerArray[$i]->NetworkSettings->IPAddress,$containerArray[$i]->Id);
 			array_push($containerList,$myContainer);
 		}
 		return $containerList;
@@ -104,12 +104,12 @@ class containerModel {
 		//calculate uptime
 		//the time from docker looks like this : 2014-02-06T13:32:03.776577907Z
 		//strtotime doesn't parse time with millis so you have to trim the first 19chars
-		$time1=strtotime(substr($containerArray[0]->State->StartedAt,0,19));
-		if($isrunning=="danger")$time1=strtotime(substr($containerArray[0]->State->FinishedAt,0,19));
-		$time2=strtotime("now");
-		$UPtime=$this->seconds2human($time2-$time1);
-		$containerNetwork=new ContainerNetwork($containerArray[0]->NetworkSettings->IPAddress,$containerArray[0]->NetworkSettings->IPPrefixLen,$containerArray[0]->NetworkSettings->Gateway,$containerArray[0]->NetworkSettings->Bridge,$containerArray[0]->NetworkSettings->PortMapping,$containerArray[0]->NetworkSettings->Ports);	
-		$myContainer= Container::longContainer($containerArray[0]->ID,$containerArray[0]->Config->Image,$containerArray[0]->Config->Hostname,$UPtime,$isrunning,$containerArray[0]->Name,$containerArray[0]->Created,$containerArray[0]->Config->ExposedPorts,$containerArray[0]->Config->Env,$containerNetwork,$runningProcesses);
+		// $time1=strtotime(substr($containerArray[0]->State->StartedAt,0,19));
+		// if($isrunning=="danger")$time1=strtotime(substr($containerArray[0]->State->FinishedAt,0,19));
+		// $time2=strtotime("now");
+		// $UPtime=$this->seconds2human($time2-$time1);
+		$containerNetwork=new ContainerNetwork($containerArray[0]->NetworkSettings->IPAddress,$containerArray[0]->NetworkSettings->IPPrefixLen,$containerArray[0]->NetworkSettings->Gateway,$containerArray[0]->NetworkSettings->Bridge,$containerArray[0]->NetworkSettings->PortMapping,json_decode(json_encode($containerArray[0]->HostConfig->PortBindings), true),json_encode($containerArray[0]->Volumes));
+		$myContainer= Container::longContainer($containerArray[0]->ID,$containerArray[0]->Config->Image,$containerArray[0]->Config->Hostname,$UPtime,$isrunning,$containerArray[0]->Name, substr($containerArray[0]->Created,0,19),$containerArray[0]->Config->ExposedPorts,$containerArray[0]->Config->Env,$containerNetwork,$runningProcesses,$containerArray[0]->Config->WorkingDir,json_encode($containerArray[0]->Config->Cmd),json_encode($containerArray[0]->HostConfig->Dns),json_encode($containerArray[0]->HostConfig->DnsSearch),$containerArray[0]->Id);
 		
 		return $myContainer;
         
@@ -123,6 +123,7 @@ class containerModel {
 	  	$this->settings->port ="22";
 	  	$this->settings->user ="root";
 	  	$this->settings->password ="jeffersonamado";
+	  	
 		$connection = ssh2_connect($this->settings->host, intval($this->settings->port));
 
 		if (!$connection) return new Notification(notificationType::Danger,'Error!', 'SSH connection to host '.$this->settings->host.':'.$this->settings->port.' failed ! Check the port and that the service is running.'.$this->settings->host.'-'. intval($this->settings->port));
@@ -141,18 +142,20 @@ class containerModel {
 		return 0;
     }
 	
-	 public function createContainer($hostname,$image,$cmd){  
+	 public function createContainer($cname,$cdnssearch,$cdns,$ciphost,$cporthost,$cport,$chostpath,$cpath,$image,$cmd,$cparams){  
 
 	  	$this->settings->host ="localhost";
 	  	$this->settings->port ="22";
 	  	$this->settings->user ="root";
 	  	$this->settings->password ="jeffersonamado";
+	  	
 		$connection = ssh2_connect($this->settings->host, intval($this->settings->port));
 
 		if (!$connection) return new Notification(notificationType::Danger,'Error!', 'SSH connection to host '.$this->settings->host.':'.$this->settings->port.' failed ! Check the port and that the service is running.'.$this->settings->host.'-'. intval($this->settings->port));		
 		ssh2_auth_password($connection, $this->settings->user,$this->settings->password);
-		// $stream = ssh2_exec($connection,'docker run -i -d -h '.$hostname.' -t '.$image.' '.$cmd);
-		$stream = ssh2_exec($connection,'docker run -i -d -t '.$image.' '.$cmd);
+		// // $stream = ssh2_exec($connection,'docker run -i -d -h '.$hostname.' -t '.$image.' '.$cmd);
+		// // $stream = ssh2_exec($connection,'docker run -i -d -t '.$image.' '.$cmd);
+		$stream = ssh2_exec($connection,'sudo docker run  --dns-search='.$cdnssearch.' --dns='.$cdns.' -d -h '.$cname.' -p '.$ciphost.':'.$cporthost.':'.$cport.' -v '.$chostpath.':'.$cpath.' '.$cparams.' '.$image.' '.$cmd.' ');
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 
 		// Enable blocking for both streams
@@ -164,8 +167,7 @@ class containerModel {
 		fclose($stream);
 		if($errorOutput!="")return new Notification(notificationType::Danger,'Error!', $errorOutput.' @ '.$this->settings->host);
 			
-		return $output;
-        
+		return $output;       
     }
 	  
 	public function infoDocker()
@@ -200,7 +202,7 @@ class containerModel {
 		stream_set_blocking($stream, true);
 		if(stream_get_contents($stream)==1)return new Notification(notificationType::Danger,'Error!', 'No image available ! Please use <code>docker pull [image-name]</code> on the server. @ '.$this->settings->host);
 		//get Images Names and Size+Unit
-		$stream = ssh2_exec($connection,"docker images | awk '{print($1\"  (\"$7$8\")#\")}' | sed -n '1!p'");
+		$stream = ssh2_exec($connection,"docker images | awk '{print($1\":\"$2\"  (\"$7$8\")#\")}' | sed -n '1!p'");
 		$errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
 
 		// Enable blocking for both streams
